@@ -546,7 +546,7 @@ else std::cout
 
         //this->Password = Password;
 
-        Reconnect();
+        //Reconnect();
     }
 
     void Connection::Connect()
@@ -682,9 +682,7 @@ else std::cout
         SubscribedCallback *SubscribedHandler = dynamic_cast<SubscribedCallback*>(Handler);
         UnsubscribedCallback *UnsubscribedHandler = dynamic_cast<UnsubscribedCallback*>(Handler);
 
-
-        return boost::shared_ptr<Connection>(
-                    new Connection(Hostname,
+        Connection *conn = new Connection(Hostname,
                                    Portnumber,
                                    RequestedJID,
                                    Password,
@@ -697,7 +695,14 @@ else std::cout
                                    UnsubscribedHandler,
                                    Verification,
                                    Verification->Mode,
-                                   DebugTreshold) );
+                                   DebugTreshold);
+
+        /// Reconnect should not called inside the Constructor, if failed connect to server,
+        /// will failed the construction, make *this* invalid, cause crash
+        boost::shared_ptr<Connection> result(conn);
+        result->Reconnect();
+
+        return result;
     }
 
 
@@ -721,8 +726,7 @@ else std::cout
             std::cerr << "ConnectionHandler is null" << std::endl;
 
 
-        return boost::shared_ptr<Connection>(
-                    new Connection(Hostname,
+        Connection *conn = new Connection(Hostname,
                                    Portnumber,
                                    RequestedJID,
                                    Password,
@@ -735,7 +739,12 @@ else std::cout
                                    UnsubscribedHandler,
                                    nullptr,
                                    VerificationMode,
-                                   DebugTreshold) );
+                                   DebugTreshold);
+
+        boost::shared_ptr<Connection> result(conn);
+        result->Reconnect();
+
+        return result;
     }
 
     void Connection::ClientDisconnected()
