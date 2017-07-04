@@ -507,9 +507,13 @@ else std::cout
             SPortnumber = boost::lexical_cast<string>( Portnumber);
             tcp::resolver::query query(Hostname, SPortnumber);
             boost::system::error_code io_error = boost::asio::error::host_not_found;
-            tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
 
-            boost::asio::connect(tcp_socket->lowest_layer(), endpoint_iterator, io_error);
+            try {
+                tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+                boost::asio::connect(tcp_socket->lowest_layer(), endpoint_iterator, io_error);
+            } catch (...) {
+                std::cerr << "Failed to resolve host! " << std::endl;
+            }
 
             if (io_error)
             {
