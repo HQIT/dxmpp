@@ -407,7 +407,10 @@ else std::cout
 
     void Connection::SendStanza(SharedStanza Stanza)
     {
-        if(this->CurrentConnectionState != ConnectionState::Connected)
+        if(this->CurrentConnectionState == ConnectionState::Connecting) {
+            return;
+        }
+        else if(this->CurrentConnectionState != ConnectionState::Connected)
         {
             throw std::runtime_error("Trying to send Stanza with disconnected connection.");
         }
