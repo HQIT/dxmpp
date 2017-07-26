@@ -407,12 +407,14 @@ else std::cout
 
     void Connection::SendStanza(SharedStanza Stanza)
     {
-        if(this->CurrentConnectionState == ConnectionState::Connecting) {
+        printf("CurrentConnectionState: %d \n", this->CurrentConnectionState);
+        /*if(this->CurrentConnectionState < ConnectionState::Connected) {
+            printf("un-connected yet, skip sending\n");
             return;
         }
-        else if(this->CurrentConnectionState != ConnectionState::Connected)
+        else */if(this->CurrentConnectionState != ConnectionState::Connected)
         {
-            throw std::runtime_error("Trying to send Stanza with disconnected connection.");
+            throw std::runtime_error("Trying to send Stanza with error connection.");
         }
 
         switch(Stanza->Type)
